@@ -1,17 +1,25 @@
 const initialState = {
-    todos: [
-      { id: 0, text: 'Learn React', completed: true },
-      { id: 1, text: 'Learn Redux', completed: false, color: 'purple' },
-      { id: 2, text: 'Build something fun!', completed: false, color: 'blue' }
-    ]
+    todos: []
   }
   
 function rootReducer(state = initialState, action) {
 
     switch (action.type) {
         case "addTodo":
-            console.log("added", state)
+            
             return [...action.todos]
+            break;
+        case "deleteTodo":
+            const filteredTodos = state.filter((item)=>{
+               
+                if(item.id.toString() !== action.id.toString()){
+                    console.log(item)
+                    return item
+                }
+            })
+          
+
+            return [...filteredTodos]
             break;
     
         default:

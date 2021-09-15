@@ -3,7 +3,7 @@ import {
     Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button
   } from 'reactstrap';
-export default function Todo({todo}) {
+export default function Todo({todo, deleteSpecificTodo}) {
     return (
         <div className="col-4 mb-3">
         <Card>
@@ -12,7 +12,9 @@ export default function Todo({todo}) {
             <CardTitle tag="h5">{todo.title}</CardTitle>
             <CardSubtitle tag="h6" className="mb-2 text-muted"></CardSubtitle>
             <CardText>{todo.text}</CardText>
-            <Button>Button</Button>
+            <Button data-id={todo.id} onClick={(e)=>{
+                deleteSpecificTodo(e.currentTarget.dataset.id)
+            }}>delete</Button>
           </CardBody>
         </Card>
       </div>
