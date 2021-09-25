@@ -7,6 +7,7 @@ import {
   Card, CardBody,
   CardTitle
 } from 'reactstrap';
+
 export const Home = () => {
 
   const state = useSelector(state => state)
@@ -22,7 +23,6 @@ export const Home = () => {
       title: e.currentTarget.value || "",
       completed: false
     }
-    
     setTodo(newtodo);
   }
 
@@ -38,55 +38,63 @@ export const Home = () => {
   }
 
   const addTodo = () => {
-
-    
-    setTodo(() => {
-      return {
-        ...todo,
-        id: todos.length
-      }
-    });
-    
-    setTodos((prev)=>{
-
-        prev.push(todo);
-        dispatch({ type: "addTodo", todos: [...prev] });
-        return prev
-  
+    console.log('current todos', todos)
+    setTodos(()=>{
+      const newArr = [...todos, todo];
+      dispatch({"type":"addTodo", todos: newArr});
+      return newArr
     })
+
+    setTodo({});
     
     input.forEach((input) => {
       input.value = "";
     })
     document.querySelector("textarea").value = "";
-
   }
 
-  const deleteTodo = () => {
+  // const deleteTodo = () => {
 
-    setTodos(todos.filter((item) => {
-      const lastTodo = todos.at(-1);
-      return item.id !== lastTodo.id
-    }))
-    dispatch({type: "addTodo", todos: todos})
-  }
+  //   setTodos(todos.filter((item) => {
+  //     const lastTodo = todos.at(-1);
+  //     return item.id !== lastTodo.id
+  //   }));
+  //   dispatch({type: "addTodo", todos: todos})
+  //   console.log('state', state)
+  // }
 
   const deleteSpecificTodo = (id)=>{
      
     dispatch({type: "deleteTodo", id:id, todos:todos});
-    setTodos([...state]);
 
+    setTodos((prevState)=>{
+      let filteredTodos = prevState.filter( ( item ) => {
+        console.log(item)
+        const itemToDelete = (item) => {
+          if(item.id == id) return item
+        }
+        console.log("itemToDelete", itemToDelete(item));
+      
+      });
+
+      return filteredTodos
+    });
+    console.log('todos after delete', todos)
+    setTodo({});
   }
+
+  useEffect(()=>{
+    setTodos(state)
+  },[])
+
 
   return (
     <>
       <section className="display row">
         {
 
-          state.length > 0 && state.map((todo, i) => {
-            //console.log(todo)
-            if (todo.text !== undefined)
-              return <Todo key={i + 1} todo={todo} deleteSpecificTodo={deleteSpecificTodo}/>
+          state.length > 0 && state.map((todo, i) => { 
+             return <Todo key={i + 1} todo={todo} deleteSpecificTodo={deleteSpecificTodo}/>
           })
         }
       </section>
@@ -109,9 +117,9 @@ export const Home = () => {
           <div className="col-6">
             <Button color="primary" onClick={() => { addTodo() }} className="d-block m-auto btn-block btn-lg">Add</Button>
           </div>
-          <div className="col-6">
+          {/* <div className="col-6">
             <Button color="danger" onClick={() => { deleteTodo() }} className="d-block m-auto btn-block btn-lg">Delete</Button>
-          </div>
+          </div> */}
         </FormGroup>
       </Form>
       </CardBody>
