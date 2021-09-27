@@ -11,7 +11,7 @@ function rootReducer(state = initialState, action) {
             break;
         case "deleteTodo":
             const filteredTodos = state.filter((item)=>{
-                if(item.id?.toString() !== action.id?.toString()){
+                if(item.id.toString() !== action.id.toString()){
                     return item
                 }
             })

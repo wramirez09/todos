@@ -1,18 +1,21 @@
 
-import React, { useState, useEffect } from 'react';
+import { Drawer } from '@mui/material';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Form, FormGroup, Input } from 'reactstrap';
+
 import Todo from './Todo';
-import {
-  Card, CardBody,
-  CardTitle
-} from 'reactstrap';
+import TodoForm from './TodoForm';
+
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import TodoModal from './TodoModal';
+
 
 export const Home = () => {
 
   const state = useSelector(state => state)
   const dispatch = useDispatch();
-  const [todo, setTodo] = useState();
+  const [todo, setTodo] = useState({});
   const [todos, setTodos] = useState([]);
   const input = document.querySelectorAll('input');
 
@@ -51,37 +54,27 @@ export const Home = () => {
       input.value = "";
     })
     document.querySelector("textarea").value = "";
+    setOpenDrawer(false)
   }
-
-  // const deleteTodo = () => {
-
-  //   setTodos(todos.filter((item) => {
-  //     const lastTodo = todos.at(-1);
-  //     return item.id !== lastTodo.id
-  //   }));
-  //   dispatch({type: "addTodo", todos: todos})
-  //   console.log('state', state)
-  // }
-
+  
   const deleteSpecificTodo = (id)=>{
      
     dispatch({type: "deleteTodo", id:id, todos:todos});
 
     setTodos((prevState)=>{
       let filteredTodos = prevState.filter( ( item ) => {
-        console.log(item)
-        const itemToDelete = (item) => {
           if(item.id == id) return item
-        }
-        console.log("itemToDelete", itemToDelete(item));
-      
       });
 
       return filteredTodos
     });
-    console.log('todos after delete', todos)
+    
     setTodo({});
   }
+
+
+  const [openModal, setOpenModal] = useState(false)
+  const [openDrawer, setOpenDrawer] = useState(false)
 
   useEffect(()=>{
     setTodos(state)
@@ -89,8 +82,8 @@ export const Home = () => {
 
 
   return (
-    <>
-      <section className="display row">
+    <Fragment>
+      <section className="row">
         {
 
           state.length > 0 && state.map((todo, i) => { 
@@ -98,33 +91,16 @@ export const Home = () => {
           })
         }
       </section>
-      <Card className="col-6 p-3">
-        <CardBody>
-          <CardTitle>Create a To Do</CardTitle>
-      <Form className="row">
-        <div className="display" />
-        <FormGroup className="row">
-          <label htmlFor="title" >Title</label>
-          <Input id={"title"} className="mb-3" type="text" onChange={(e) => {
-            e.persist();
-            handleTitleChange(e)
-          }} />
-          <label htmlFor="text">Text</label>
-          <textarea id={"text"} rows="10" className="mb-3" type="text" onChange={(e) => {
-            e.persist();
-            handleTextChange(e)
-          }} />
-          <div className="col-6">
-            <Button color="primary" onClick={() => { addTodo() }} className="d-block m-auto btn-block btn-lg">Add</Button>
-          </div>
-          {/* <div className="col-6">
-            <Button color="danger" onClick={() => { deleteTodo() }} className="d-block m-auto btn-block btn-lg">Delete</Button>
-          </div> */}
-        </FormGroup>
-      </Form>
-      </CardBody>
-      </Card>
-    </>
+     
+      <Fab color="primary" aria-label="add" onClick={()=>{setOpenDrawer(true)}}>
+        <AddIcon  />
+      </Fab>
+      <Drawer open={openDrawer} anchor="bottom" classes="p-3" variant="temporary">
+        
+        <TodoForm addTodo={addTodo} handleTextChange={handleTextChange} handleTitleChange={handleTitleChange}/>
+      </Drawer>
+      <TodoModal open={openModal}/>
+    </Fragment>
   );
 
 }
